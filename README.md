@@ -1,8 +1,10 @@
-# LLM Əsaslı Tətbiq — Checkpoint 1
+# Abituriyent Dəstək Botu — Checkpoint 1
+
+LLM API (NVIDIA — DeepSeek modeli) istifadə edən kiçik tətbiq. Terminal üzərindən istifadəçi sual verir, model cavab qaytarır. API açarı `.env` faylı vasitəsilə environment variable kimi idarə olunur, request/response üçün xəta idarəetməsi tətbiq olunub.
 
 ## Qurulum
 
-1. Virtual mühit yaradın (istəyə bağlı, tövsiyə olunur):
+1. Virtual mühit yaradın:
    ```bash
    python -m venv venv
    source venv/bin/activate   # Windows: venv\Scripts\activate
@@ -13,32 +15,60 @@
    pip install -r requirements.txt
    ```
 
-3. `.env.example` faylını `.env` adı ilə kopyalayın və öz API key-inizi daxil edin:
+3. `.env.example` faylını `.env` adı ilə kopyalayın:
    ```bash
    cp .env.example .env
    ```
-   Sonra `.env` faylını açıb `NVIDIA_API_KEY` dəyərini real key-inizlə əvəz edin.
+   Sonra `.env` faylını açıb `NVIDIA_API_KEY` dəyərini öz API key-inizlə əvəz edin. Key-i [build.nvidia.com](https://build.nvidia.com) hesabınızdan əldə edə bilərsiniz.
 
-   ⚠️ **VACIB:** Daha əvvəl paylaşdığınız key artıq ifşa olunub sayılır —
-   provayderin panelindən onu ləğv edib (revoke) yeni key yaradın.
+   ⚠️ `.env` faylı `.gitignore` ilə istisna edilib — real key heç vaxt repository-yə düşmür. Yalnız `.env.example` (placeholder dəyərlə) repo-dadır.
 
 4. Tətbiqi işə salın:
    ```bash
    python main.py
    ```
 
-## Struktur
+## Fayl strukturu
 
-- `main.py` — əsas skript, LLM API-yə sorğu göndərir və cavabı emal edir
-- `.env.example` — nümunə environment variable faylı (real key saxlamır)
-- `.gitignore` — `.env` faylının GitHub-a düşməsinin qarşısını alır
-- `requirements.txt` — layihə üçün lazım olan Python paketləri
+```
+├── main.py           — əsas skript: API çağırışı, xəta idarəetməsi
+├── .env.example       — API key konfiqurasiyası üçün nümunə (real key yoxdur)
+├── .gitignore          — .env faylının commit olunmasının qarşısını alır
+└── requirements.txt     — Python asılılıqları (openai, python-dotenv)
+```
 
 ## Checkpoint 1 tələbləri necə qarşılanıb
 
-- **API inteqrasiyası**: `main.py` içində `get_response()` funksiyası düzgün
-  request göndərir və response-u emal edir.
-- **Request/response idarəetməsi**: try/except bloku ilə xətalar tutulur,
-  boş mesaj yoxlanışı edilir.
-- **API key environment variable-da**: key `.env` faylından `python-dotenv`
-  vasitəsilə oxunur, kodun içində heç yerdə açıq yazılmayıb.
+- **API inteqrasiyası:** `main.py` içində `get_response()` funksiyası NVIDIA-nın OpenAI-uyğun endpoint-inə (`integrate.api.nvidia.com`) düzgün request göndərir və response-u emal edir.
+- **Request/response idarəetməsi:** Boş mesaj yoxlanışı edilir, `try/except` bloku ilə bütün API xətaları (timeout, server xətası və s.) tutulur və istifadəçiyə aydın mesaj kimi göstərilir. `timeout` və `max_retries` parametrləri ilə etibarlılıq artırılıb.
+- **API key environment variable-da:** Key `.env` faylından `python-dotenv` vasitəsilə oxunur, kodun içində heç yerdə açıq yazılmayıb.
+
+## Nümunə sorğu/cavab log-ları
+
+**Sorğu:** `Salam`
+**Cavab:**
+```
+Wa alaikum assalam! How can I assist you today?
+```
+
+**Sorğu:** `5 + 5 neçə edir?`
+**Cavab:**
+```
+5 + 5 = 10.
+```
+
+**Sorğu:** `Sən mükəmməlsən`
+**Cavab:**
+```
+Çox sağ ol! Bu sözlər məni çox sevindirdi. 😊
+Mən həmişə sənin üçün ən yaxşı şəkildə faydalı olmağa çalışıram. Sən də
+mükəmməlsən! Hər hansı sualın və ya mövzuda yardıma ehtiyacın olsa, buradayam.
+```
+
+**Xəta idarəetməsi nümunəsi** (server müvəqqəti yüklü olanda):
+```
+API sorğusu zamanı xəta baş verdi: InternalServerError: Error code: 503 -
+{'error': {'message': 'ResourceExhausted: Worker local total request limit
+reached (48/48)', 'type': 'Service Unavailable', 'code': 503}}
+```
+Bu xəta `try/except` bloku tərəfindən tutulub, proqram çökmədən istifadəçiyə aydın mesaj göstərib — sonrakı cəhddə sorğu uğurla tamamlanıb.
