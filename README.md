@@ -1,4 +1,4 @@
-# LLM Əsaslı Tətbiq — Checkpoint 1: API İnteqrasiyası
+# LLM Əsaslı Tətbiq — Checkpoint 1
 
 ## Qurulum
 
