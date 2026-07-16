@@ -1,4 +1,4 @@
-# Abituriyent Dəstək Botu — Checkpoint 1
+# Checkpoint 1
 
 LLM API (NVIDIA — DeepSeek modeli) istifadə edən kiçik tətbiq. Terminal üzərindən istifadəçi sual verir, model cavab qaytarır. API açarı `.env` faylı vasitəsilə environment variable kimi idarə olunur, request/response üçün xəta idarəetməsi tətbiq olunub.
 
@@ -65,10 +65,4 @@ Mən həmişə sənin üçün ən yaxşı şəkildə faydalı olmağa çalışı
 mükəmməlsən! Hər hansı sualın və ya mövzuda yardıma ehtiyacın olsa, buradayam.
 ```
 
-**Xəta idarəetməsi nümunəsi** (server müvəqqəti yüklü olanda):
-```
-API sorğusu zamanı xəta baş verdi: InternalServerError: Error code: 503 -
-{'error': {'message': 'ResourceExhausted: Worker local total request limit
-reached (48/48)', 'type': 'Service Unavailable', 'code': 503}}
-```
-Bu xəta `try/except` bloku tərəfindən tutulub, proqram çökmədən istifadəçiyə aydın mesaj göstərib — sonrakı cəhddə sorğu uğurla tamamlanıb.
+
